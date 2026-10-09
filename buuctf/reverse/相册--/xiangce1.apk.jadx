@@ -1,0 +1,37 @@
+{
+  "projectVersion": 2,
+  "files": [
+    "xiangce1.apk"
+  ],
+  "treeExpansionsV2": [
+    "c:cn.baidujiayuan.ver5304.A1",
+    "t:JInputs"
+  ],
+  "codeData": {
+    "comments": [],
+    "renames": []
+  },
+  "openTabs": [
+    {
+      "type": "class",
+      "tabPath": "cn.baidujiayuan.ver5304.A1",
+      "subPath": "java",
+      "caret": 374,
+      "view": {
+        "x": 0,
+        "y": 0
+      },
+      "active": false,
+      "pinned": false,
+      "bookmarked": false,
+      "hidden": false,
+      "previewTab": false
+    }
+  ],
+  "cacheDir": "C:\\Users\\顾哲迅\\AppData\\Local\\skylot\\jadx\\cache\\projects\\xiangce1-f65f090e9e353cf43794bc05cbee7e7c",
+  "enableLiveReload": false,
+  "searchHistory": [],
+  "searchResourcesFilter": "$TEXT",
+  "searchResourcesSizeLimit": 0,
+  "pluginOptions": {}
+}

